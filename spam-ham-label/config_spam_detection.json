@@ -1,0 +1,26 @@
+{
+    "task_name": "SpamClassification",
+    "task_type": "classification",
+    "dataset": {
+      "label_column": "labels",
+      "label_separator": ", ",
+      "delimiter": ","
+    },
+    "model": {
+      "provider": "openai",
+      "name": "gpt-3.5-turbo"
+    },
+    "prompt": {
+      "task_guidelines": "You are an expert at identifying spam and legitimate messages. Your goal is to maintain the quality of communication by accurately classifying incoming messages as either 'spam' or 'ham' (legitimate). Any message that is unsolicited, contains promotional content, or attempts to deceive or defraud users should be labeled as 'spam'. Messages that are personal, non-promotional, and relevant should be marked as 'ham'. Your job is to correctly label the provided input example into one of the following categories:\n{labels}",
+      "output_guidelines": "You will return the answer as a comma separated list of labels sorted in alphabetical order. For example: \"label1, label2, label3\"",
+      "labels": [
+        "spam",
+        "ham"
+      ],
+      "few_shot_examples": "seed.csv",
+      "few_shot_selection": "semantic_similarity",
+      "few_shot_num": 5,
+      "example_template": "Input: {example}\nOutput: {labels}"
+    }
+  }
+  
