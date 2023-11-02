@@ -8,12 +8,12 @@ from evadb.functions.decorators.decorators import forward, setup
 from evadb.functions.decorators.io_descriptors.data_types import PandasDataframe
 
 
-from dataframe.aidDataframe import AIDataFrame
+from dataframe.labeling_agent import LabelingAgent
 
 class AutoLabel(AbstractFunction):
 
     @setup(cacheable=False, function_type="FeatureExtraction", batchable=False)
-    def setup(config=None):
+    def setup(self, config=None):
         if config:
             self.config = config
         else:
@@ -42,10 +42,9 @@ class AutoLabel(AbstractFunction):
     )
     def forward(self, df: pd.DataFrame) -> pd.DataFrame:
         
-        smart_df = AIDataFrame(df)
-        # smart_df.initialize_middleware()
+        label_df = LabelingAgent(df)
 
-        labelled_df = smart_df.label_data(query)
+        labelled_df = label_df.label_data(self.config)
         labelled_df.to_csv("spam-ham-label/data/labelled_df.csv")
         response = "labelled dataframe is saved to spam-ham-label/data/labelled_df.csv"
         
