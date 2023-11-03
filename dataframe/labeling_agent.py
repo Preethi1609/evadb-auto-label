@@ -76,13 +76,14 @@ class LabelingAgent(pd.DataFrame):
             question += "{current_example}".replace("{current_example}", current_example)
         last_part = "Return the output in the same order as the comments"
         llm_prompt = f"{self.task_guidelines}\n{self.output_guidelines}\n{self.examples}\n{question}\n{last_part}"
-        print("LLM PROMT: ", llm_prompt)
+        # print("LLM PROMT: ", llm_prompt)
+        print(question)
         return llm_prompt
     
     def label_data(self, config):
         self.c = self.parse_config(config) #create_labelling_prompt(config)
         prompt = self.generate_prompt_classsification_task()
-        openai.api_key = "sk-xxxx"
+        openai.api_key = "sk-xxx"
         answer = openai.ChatCompletion.create(model="gpt-3.5-turbo", \
                                                   temperature=0.2, \
                                                   messages=[{"role": "user", "content": prompt}]).choices[0].message.content
