@@ -2,7 +2,7 @@
     "task_name": "SpamClassification",
     "task_type": "classification",
     "dataset": {
-      "label_column": "CLASS",
+      "label_column": "class",
       "label_separator": ", ",
       "delimiter": ","
     },

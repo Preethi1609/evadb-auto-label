@@ -8,7 +8,6 @@ import json
 class LabelingAgent(pd.DataFrame):
     def __init__(self, df, description=None, name=None) -> None:
         super().__init__(df)
-
         #initialize pandas dataframe
         self.df = df        
         if len(df)>0:
@@ -63,27 +62,30 @@ class LabelingAgent(pd.DataFrame):
         self.label_column = config_data["dataset"]["label_column"]
         self.examples = "Some examples with their output answers are provided below:\n"
         
-        df = pd.read_csv(self.few_shot_examples)
-        for index, row in df.iterrows():
+        seed_df = pd.read_csv(self.few_shot_examples)
+        for index, row in seed_df.iterrows():
             example_values = [f"{val}" for col, val in row.items() if col != self.label_column]
             example = ', '.join(example_values)
             self.examples += self.example_template.replace("{example}", example).replace("{labels}", str(row[self.label_column]))
     
     def generate_prompt_classsification_task(self):        
         # Generate the LLM prompt
-        current_example = "Input: "+ str(self.df) + "Output: "
-        question = "Now I want you to label the following example:\n{current_example}".replace("{current_example}", current_example)
-        llm_prompt = f"{self.task_guidelines}\n{self.output_guidelines}\n{self.examples}\n{question}"
-        print("LLM PROMTTT: ", llm_prompt)
+        question = "Now I want you to label the following comments:\n"
+        for index, row in self.df.iterrows():
+            current_example = "Input: "+ str(row['content']) + "\n"
+            question += "{current_example}".replace("{current_example}", current_example)
+        last_part = "Return the output in the same order as the comments"
+        llm_prompt = f"{self.task_guidelines}\n{self.output_guidelines}\n{self.examples}\n{question}\n{last_part}"
+        print("LLM PROMT: ", llm_prompt)
         return llm_prompt
     
     def label_data(self, config):
         self.c = self.parse_config(config) #create_labelling_prompt(config)
         prompt = self.generate_prompt_classsification_task()
-
+        openai.api_key = "sk-xxxx"
         answer = openai.ChatCompletion.create(model="gpt-3.5-turbo", \
                                                   temperature=0.2, \
-                                                  messages=[{"role": "user", "content": prompt}])
+                                                  messages=[{"role": "user", "content": prompt}]).choices[0].message.content
         return answer
 
 

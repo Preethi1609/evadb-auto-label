@@ -26,9 +26,9 @@ class AutoLabel(AbstractFunction):
     @forward(
         input_signatures=[
             PandasDataframe(
-                columns=["data"],
-                column_types=[NdArrayType.STR],
-                column_shapes=[(None, 3)],
+                columns=["comment_id", "author", "date", "content"],
+                column_types=[NdArrayType.STR, NdArrayType.STR, NdArrayType.STR, NdArrayType.STR],
+                column_shapes=[(None,),(None,),(None,),(None,)],
             ),
 
         ],
@@ -43,11 +43,10 @@ class AutoLabel(AbstractFunction):
     def forward(self, df: pd.DataFrame) -> pd.DataFrame:
         
         label_df = LabelingAgent(df)
-
-        labelled_df = label_df.label_data(self.config)
-        labelled_df.to_csv("spam-ham-label/data/labelled_df.csv")
-        response = "labelled dataframe is saved to spam-ham-label/data/labelled_df.csv"
-        
+        response = label_df.label_data(self.config)
+        # labelled_df.to_csv("spam-ham-label/data/labelled_df.csv")
+        # response = "labelled dataframe is saved to spam-ham-label/data/labelled_df.csv"
+        # print("OUTPUT:", response)
         df_dict = {"response": [response]}
         
         ans_df = pd.DataFrame(df_dict)
