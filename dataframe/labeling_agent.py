@@ -1,6 +1,6 @@
 import pandas as pd
 import openai
-from config import Config
+# from config import Config
 import json
 
 

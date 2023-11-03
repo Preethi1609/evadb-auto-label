@@ -17,10 +17,10 @@
         "spam",
         "ham"
       ],
-      "few_shot_examples": "seed.csv",
+      "few_shot_examples": "spam-ham-label/data/seed.csv",
       "few_shot_selection": "semantic_similarity",
       "few_shot_num": 5,
-      "example_template": "Input: {example}\nOutput: {labels}"
+      "example_template": "Input: {example}\nOutput: {labels}\n"
     }
   }
   
