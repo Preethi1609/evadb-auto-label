@@ -2,6 +2,7 @@ import pandas as pd
 import openai
 # from config import Config
 import json
+import os
 
 
 
@@ -39,11 +40,10 @@ class LabelingAgent(pd.DataFrame):
         self.pd_df.to_csv(file_path)
     
         
-    def initialize_middleware(self):
+    def get_api_key(self):
         """ Initializes openai api with the openai key and model """
-        open_ai_key = self.config.get_open_ai_key()
+        open_ai_key = os.environ.get('OPENAI_API_KEY')
         openai.api_key = open_ai_key
-        self.openai_model = "gpt-3.5-turbo"
         return
 
     def parse_config(self, config):
@@ -63,7 +63,7 @@ class LabelingAgent(pd.DataFrame):
         self.examples = "Some examples with their output answers are provided below:\n"
         
         seed_df = pd.read_csv(self.few_shot_examples)
-        for index, row in seed_df.iterrows():
+        for _, row in seed_df.iterrows():
             example_values = [f"{val}" for col, val in row.items() if col != self.label_column]
             example = ', '.join(example_values)
             self.examples += self.example_template.replace("{example}", example).replace("{labels}", str(row[self.label_column]))
@@ -83,7 +83,7 @@ class LabelingAgent(pd.DataFrame):
     def label_data(self, config):
         self.c = self.parse_config(config) #create_labelling_prompt(config)
         prompt = self.generate_prompt_classsification_task()
-        openai.api_key = "sk-xxx"
+        self.get_api_key()
         answer = openai.ChatCompletion.create(model="gpt-3.5-turbo", \
                                                   temperature=0.2, \
                                                   messages=[{"role": "user", "content": prompt}]).choices[0].message.content
