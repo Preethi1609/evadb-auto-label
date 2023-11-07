@@ -38,22 +38,12 @@ class AutoLabel(AbstractFunction):
                 column_types=[NdArrayType.STR],
                 column_shapes=[(None,)],
             )
-            # PandasDataframe(
-            #     columns=["commentid", "commenter", "day", "comment", "class"],
-            #     column_types=[NdArrayType.STR, NdArrayType.STR, NdArrayType.STR, NdArrayType.STR, NdArrayType.STR],
-            #     column_shapes=[(None,),(None,),(None,),(None,),(None,)],
-            # )
         ],
     )
     def forward(self, df: pd.DataFrame) -> pd.DataFrame:
         
         label_df = LabelingAgent(df)
         response = label_df.label_data(self.config)
-        # labelled_df.to_csv("spam-ham-label/data/labelled_df.csv")
-        # response = "labelled dataframe is saved to spam-ham-label/data/labelled_df.csv"
-        # response = "spam, ham, ham, ham, ham, ham, ham, ham, ham, spam, ham, spam, spam, spam, spam, ham, spam, ham, ham, spam, ham, ham"
-        # response = "spam, ham"
-        print("RESPONSE:", response)
         df['class'] = response.split(',')
         df.to_csv('spam-ham-label/data/labeled_data.csv', index=False)
         df_dict = {"response": [str(response)]}
