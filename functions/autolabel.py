@@ -26,11 +26,10 @@ class AutoLabel(AbstractFunction):
     @forward(
         input_signatures=[
             PandasDataframe(
-                columns=["comment_id", "author", "date", "content"],
-                column_types=[NdArrayType.STR, NdArrayType.STR, NdArrayType.STR, NdArrayType.STR],
-                column_shapes=[(None,),(None,),(None,),(None,)],
+                columns=["data"],
+                column_types=[NdArrayType.STR],
+                column_shapes=[(None, 5)],
             ),
-
         ],
         output_signatures=[
             PandasDataframe(
@@ -41,13 +40,17 @@ class AutoLabel(AbstractFunction):
         ],
     )
     def forward(self, df: pd.DataFrame) -> pd.DataFrame:
-        
+        task = df.iloc[0,0]
+        df.drop([0,0], axis=1, inplace=True)
+        # df.drop("task" , axis=1, inplace=True)
         label_df = LabelingAgent(df)
-        response = label_df.label_data(self.config)
-        # labelled_df.to_csv("spam-ham-label/data/labelled_df.csv")
-        # response = "labelled dataframe is saved to spam-ham-label/data/labelled_df.csv"
-        # print("OUTPUT:", response)
-        df_dict = {"response": [response]}
+        if task=="run":
+            response = label_df.label_data(self.config)
+            df['class'] = response.split(',')
+            df.to_csv('spam-ham-label/data/labeled_data.csv', index=False)
+        elif task=="plan":
+            response = label_df.check_price(self.config)
+        df_dict = {"response": [str(response)]}
         
         ans_df = pd.DataFrame(df_dict)
         return pd.DataFrame(ans_df)
