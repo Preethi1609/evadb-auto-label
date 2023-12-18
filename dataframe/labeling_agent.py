@@ -11,35 +11,7 @@ class LabelingAgent(pd.DataFrame):
         super().__init__(df)
         #initialize pandas dataframe
         self.df = df        
-        if len(df)>0:
-            self.is_df_loaded = True
-        else:
-            self.is_df_loaded = False
-
-    @property
-    def col_count(self):
-        if self.is_df_loaded:
-            return len(list(self.pd_df.columns))
-        
-    @property
-    def row_count(self):
-        if self.is_df_loaded:
-            return len(self.pd_df)
-        
-    @property
-    def sample_head_csv(self):
-        if self.is_df_loaded:
-            return self.pd_df.head(5).to_csv()
-        
-    
-    @property
-    def metadata(self):
-        return self.pd_df.info()
-    
-    def to_csv(self, file_path):
-        self.pd_df.to_csv(file_path)
-    
-        
+                
     def get_api_key(self):
         """ Initializes openai api with the openai key and model """
         open_ai_key = os.environ.get('OPENAI_API_KEY')
